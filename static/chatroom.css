@@ -1,0 +1,13 @@
+.divider {
+	width: 10%;
+}
+.holder {
+	display: flex;
+}
+.sent {
+	color: red;
+}
+
+body {
+	text-align: center;
+}
