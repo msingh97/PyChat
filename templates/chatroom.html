@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PyChat</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chatroom.css') }}">
+</head>
+<body>
+<h1>PyChat</h1>
+<p>Welcome, {{user}}</p>
+<p>{{messages.__len__()}} messages in this chat.</p>
+<hr>
+<div class="messages">
+
+	{% for i in messages %}
+		{% if i.user == user %}
+		<div class=holder>
+			<div class="divider"> </div>
+			<div class="sent">
+				<p>{{to_string(i.time)}}</p>
+				<p>{{i.user}}</p>
+				<p>{{i.message}}</p>
+			</div>
+		</div>
+		{% endif %}
+		{% if i.user != user %}
+			<div class="received">
+				<p>{{to_string(i.time)}}</p>
+				<p>{{i.user}}</p>
+				<p>{{i.message}}</p>
+			</div>
+			<div class="divider"></div>
+		{% endif %}
+	{% endfor %}
+
+</div>
+<div class="send">
+	<form action="{{url_for('chatroom', username=user)}}" method="post">
+		<input type="text" name="message_content"><input type="submit" name="Send" value="Send">
+	</form>
+</div>	
+</body>
+</html>
