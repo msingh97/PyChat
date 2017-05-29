@@ -1,13 +1,20 @@
-.divider {
-	width: 10%;
+body {
+	font-family: sans-serif;
+}
+.top-bar {
+	text-align: center;
+	margin-top: 3px;
 }
 .holder {
-	display: flex;
+	width: 100%;
 }
 .sent {
-	color: red;
+	width: 100%;
+	text-align: right;
 }
-
-body {
+.send {
 	text-align: center;
+}
+#sender {
+	width: 95%;
 }
