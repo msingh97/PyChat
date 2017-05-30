@@ -5,27 +5,33 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chatroom.css') }}">
 </head>
 <body>
-<h1 class="top-bar">PyChat</h1>
-<p class="top-bar">Welcome, {{user.username}}</p>
-<p class="top-bar">{{users}} users in this chat.</p>
-<hr>
+<div class="top-bar">
+	<h1 class="top">PyChat</h1>
+	<p class="top">Welcome, {{user.username}}</p>
+	<p class="top">{{users}} users in this chat.</p>
+</div>
 <div class="messages">
-
 	{% for i in messages %}
 		{% if i.user == user.username %}
 		<div class=holder>
 			<div class="sent">
-				<p>{{to_string(i.time)}}</p>
+				<p id = "time">{{to_string(i.time)}}</p>
 				<p>{{i.user}}</p>
 				<p>{{i.message}}</p>
+				{% if is_youtube_link(i.message) %}
+					<iframe width="560" height="315" src="{{get_vid_embed(i.message)}}" frameborder="0" allowfullscreen></iframe>
+				{% endif %}
 			</div>
 		</div>
 		{% endif %}
 		{% if i.user != user.username %}
 			<div class="received">
-				<p>{{to_string(i.time)}}</p>
+				<p id = "time">{{to_string(i.time)}}</p>
 				<p>{{i.user}}</p>
 				<p>{{i.message}}</p>
+				{% if is_youtube_link(i.message) %}
+					<iframe width="560" height="315" src="{{get_vid_embed(i.message)}}" frameborder="0" allowfullscreen></iframe>
+				{% endif %}
 			</div>
 		{% endif %}
 	{% endfor %}
