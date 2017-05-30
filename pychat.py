@@ -47,7 +47,7 @@ def chatroom(user_id):
 			print("NEW MESSAGE -- " + user.username + ": " + message_content)
 			all_messages = session.query(Message).order_by(Message.time)
 			return redirect(url_for('chatroom', user_id=user_id))
-	return render_template("chatroom.html", user=user, messages=session.query(Message).all(), users=num_users(), to_string = time_to_string)
+	return render_template("chatroom.html", user=user, messages=session.query(Message).all(), users=num_users(), to_string = time_to_string, is_youtube_link=is_youtube_link, get_vid_embed=get_vid_embed)
 
 @app.route("/chat/JSON")
 def JSON():
@@ -60,8 +60,20 @@ def messages_to_dict():
 
 def time_to_string(time_float):
 	"""Converts time.time() object into a string."""
-	return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(time_float))
-
+	Time = time.localtime(time_float)
+	if Time.tm_hour >= 12:
+		hour = str(Time.tm_hour - 12)
+		post = "PM"
+	else:
+		hour = str(Time.tm_hour)
+		post = "AM"
+	if hour == "0":
+		hour = "12"
+	if Time.tm_min < 10:
+		minute = "0" + str(Time.tm_min)
+	else:
+		minute = str(Time.tm_min)
+	return hour + ":" + minute + " " + post
 def num_users():
 	"""The number of users in the database."""
 	return len(session.query(User).all())
@@ -74,6 +86,17 @@ def clear_db():
 	session.commit()
 	print("\nDone.")
 
+def is_youtube_link(link):
+	return "youtube.com/watch?v=" in link
+
+def get_vid_embed(link):
+	return "https://www.youtube.com/embed/" + link.split("youtube.com/watch?v=")[1]
+
+def print_message(message):
+	assert isinstance(message, str)
+	if is_youtube_link(message):
+		return get_vid_embed(message)
+	return message
 
 if __name__ == "__main__":
 	try:
