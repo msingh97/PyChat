@@ -1,6 +1,25 @@
 body {
 	text-align: center;
+	font-family: sans-serif;
+}
+h1 {
+	font-size: 72px;
+	color: #333;
+}
+.flash_messages {
+	height: 10px;
+	margin-bottom: 5px;
 }
 .flash {
 	color: red;
+}
+.main {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  position: absolute;
+}
+.content {
+  width: 100%;
 }
