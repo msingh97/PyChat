@@ -5,7 +5,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
+	<div class="main">
+	<div class="content">
 	<h1>PyChat</h1>
+	<div id="flash_messages">
 	{%with messages = get_flashed_messages() %}
 	{% if messages %}
 		{% for message in messages %}
@@ -13,8 +16,11 @@
 		{% endfor %}
 	{% endif %}
 	{% endwith %}
+	</div>
 	<form action="{{ url_for('login') }}" method="post" id="login">
-		<input type="text" name="username" placeholder="Username"> <input type="submit" name="Log In" value="Log In">
+		<input type="text" name="username" placeholder="Username" autofocus="autofocus"> <input type="submit" name="Log In" value="Log In">
 	</form>
+	</div>
+	</div>
 </body>
 </html>

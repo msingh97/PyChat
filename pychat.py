@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from db import Base, User, Message
 import time
+import bleach
 
 
 engine = create_engine('sqlite:///chatroom.db')
@@ -40,14 +41,15 @@ def chatroom(user_id):
 		message_content = request.form["message_content"]
 		if message_content:
 			# ignore blank messages
-			message_time = time.time()
-			message = Message(time=message_time, user=user.username, message=message_content)
+			message_time = time_to_string()
+			message_id = len(session.query(Message).all())
+			message = Message(id = message_id, time=message_time, user=user.username, message=bleach.clean(message_content))
 			session.add(message)
 			session.commit()
 			print("NEW MESSAGE -- " + user.username + ": " + message_content)
 			all_messages = session.query(Message).order_by(Message.time)
 			return redirect(url_for('chatroom', user_id=user_id))
-	return render_template("chatroom.html", user=user, messages=session.query(Message).all(), users=num_users(), to_string = time_to_string, is_youtube_link=is_youtube_link, get_vid_embed=get_vid_embed)
+	return render_template("chatroom.html", user=user, messages=session.query(Message).all(), users=num_users(), to_string = time_to_string)
 
 @app.route("/chat/JSON")
 def JSON():
@@ -58,9 +60,9 @@ def messages_to_dict():
 	"""Returns a list of dictionary objects representing each Message object in the database. To be used to 'jsonify' the message content."""
 	return [{"time": i.time, "user": i.user, "message": i.message} for i in session.query(Message).all()]
 
-def time_to_string(time_float):
+def time_to_string():
 	"""Converts time.time() object into a string."""
-	Time = time.localtime(time_float)
+	Time = time.localtime()
 	if Time.tm_hour >= 12:
 		hour = str(Time.tm_hour - 12)
 		post = "PM"
@@ -74,6 +76,7 @@ def time_to_string(time_float):
 	else:
 		minute = str(Time.tm_min)
 	return hour + ":" + minute + " " + post
+
 def num_users():
 	"""The number of users in the database."""
 	return len(session.query(User).all())
@@ -85,18 +88,6 @@ def clear_db():
 	session.query(User).delete()
 	session.commit()
 	print("\nDone.")
-
-def is_youtube_link(link):
-	return "youtube.com/watch?v=" in link
-
-def get_vid_embed(link):
-	return "https://www.youtube.com/embed/" + link.split("youtube.com/watch?v=")[1]
-
-def print_message(message):
-	assert isinstance(message, str)
-	if is_youtube_link(message):
-		return get_vid_embed(message)
-	return message
 
 if __name__ == "__main__":
 	try:
