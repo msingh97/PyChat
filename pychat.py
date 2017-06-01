@@ -58,7 +58,7 @@ def JSON():
 
 def messages_to_dict():
 	"""Returns a list of dictionary objects representing each Message object in the database. To be used to 'jsonify' the message content."""
-	return [{"time": i.time, "user": i.user, "message": i.message} for i in session.query(Message).all()]
+	return [{"time": i.time, "user": i.user, "message": i.message, "id": i.id} for i in session.query(Message).all()]
 
 def time_to_string():
 	"""Converts time.time() object into a string."""

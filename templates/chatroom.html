@@ -12,27 +12,32 @@
 	<p class="top">{{users}} users in this chat.</p>
 </div>
 <div id="messages"></div>
-<script>setInterval(
+<script>
+var lastMessage = -1;
+var lastUser = "";
+setInterval(
 	function() {
 		$.getJSON("{{url_for('JSON')}}", {}, function(data) {
 			var html_code = "";
-			var lastUser = "";
 			for (i in data.Messages) {
-				if (lastUser != data.Messages[i].user) {
-					lastUser = data.Messages[i].user;
-					var userBlock = "<p>" + data.Messages[i].user + "</p>";
-				} else {
-					var userBlock = "";
+				if (data.Messages[i].id > lastMessage) {
+					lastMessage = data.Messages[i].id;
+					if (lastUser != data.Messages[i].user) {
+						lastUser = data.Messages[i].user;
+						var userBlock = "<p>" + data.Messages[i].user + "</p>";
+					} else {
+						var userBlock = "";
+					}
+					if (data.Messages[i].user == "{{user.username}}") {
+						html_code += "<div class='sent'>" + userBlock + "<div class='chat-bubble-send'>";
+					} else {
+						html_code += "<div class='received'>" + userBlock + "<div class='chat-bubble-receive'>";
+					}
+					html_code += "<div class='bubble-text'>" + "<p>" + data.Messages[i].message + "</p>";
+					html_code += "</div></div></div>";
 				}
-				if (data.Messages[i].user == "{{user.username}}") {
-					html_code += "<div class='sent'>" + userBlock + "<div class='chat-bubble-send'>";
-				} else {
-					html_code += "<div class='received'>" + userBlock + "<div class='chat-bubble-receive'>";
-				}
-				html_code += "<div class='bubble-text'>" + "<p>" + data.Messages[i].message + "</p>";
-				html_code += "</div></div></div>";
 			}
-			document.getElementById("messages").innerHTML = html_code;
+			$("#messages").append(html_code);
 		});
 	}, 500);
 </script>
